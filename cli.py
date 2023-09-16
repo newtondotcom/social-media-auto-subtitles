@@ -4,7 +4,6 @@ import whisper
 import argparse
 import warnings
 from utils import filename, str2bool, write_srt, write_ass
-from pyannotef import *
 import subprocess
 
 
@@ -54,8 +53,6 @@ def main():
         return
 
     for path, srt_path in subtitles.items():
-
-        ### ADDING ASS SUBTITLES TO VIDEO
         out_path = os.path.join(output_dir, f"{filename(path)}ASS.mp4")
         print(f"Adding subtitles to {filename(path)}...")
 
