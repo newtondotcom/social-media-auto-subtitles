@@ -61,16 +61,28 @@ def write_ass(transcript: Iterator[dict], file: TextIO):
     previous_end = "00:00:00.000"
 
     for i, segment in enumerate(transcript, start=1):
+        counter = 0
         start_time = format_timestamp(segment['start'], always_include_hours=True)
         end_time = format_timestamp(segment['end'], always_include_hours=True)
         text = segment['text'].strip().replace('\\', '\\\\').replace('{', '\\{').replace('}', '\\}').replace('-->', '->')
-        style = random.choice(styles)
         delta = abs(convert_ms(start_time) - convert_ms(end_time))
         delta_word = delta/text.count(" ")//11
         boiler = "{\q1\\be1\\b700\shad10\\a11\k"+str(int(delta_word))+"}"
         emoji = r" {\frz345}\u1F468 "
         text =boiler+text.upper().replace(" "," "+boiler)
-        file.write(f"""Dialogue: 0,{start_time},{end_time},{style},,50,50,20,,{text}"""+  "\n")
+        text = text.split(" ")
+        length = len(text)
+        while counter < length:
+            style = styles[random.randint(0,2)]
+            localcount = random.randint(1, 3)
+            if counter + localcount > length:
+                localcount = length - counter
+            localstart = add_n_ms(start_time,counter*delta_word)
+            localend = add_n_ms(localstart,localcount*delta_word)
+            localtext = " ".join(text[counter:counter+localcount])
+            file.write(f"""Dialogue: 0,{localstart},{localend},{style},,50,50,20,,{localtext}"""+  "\n")
+            counter += localcount       
+
 
 
 def filename(path):
