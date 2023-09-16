@@ -1,0 +1,1 @@
+python3 cli.py input/test2.mp4 -o output/

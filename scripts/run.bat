@@ -1,0 +1,1 @@
+python .\cli.py .\test.mp4 -o .\output\

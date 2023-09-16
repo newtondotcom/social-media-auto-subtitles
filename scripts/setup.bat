@@ -1,0 +1,1 @@
+pip install -qq https://github.com/pyannote/pyannote-audio/archive/develop.zip
