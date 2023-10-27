@@ -18,18 +18,43 @@ def str2bool(string):
 def format_timestamp(seconds: float, always_include_hours: bool = False):
     assert seconds >= 0, "non-negative timestamp expected"
     milliseconds = round(seconds * 1000.0)
-
     hours = milliseconds // 3_600_000
     milliseconds -= hours * 3_600_000
-
     minutes = milliseconds // 60_000
     milliseconds -= minutes * 60_000
-
     seconds = milliseconds // 1_000
     milliseconds -= seconds * 1_000
-
+    milliseconds = milliseconds // 10
     hours_marker = f"{hours}:" if always_include_hours or hours > 0 else ""
-    return f"{hours_marker}{minutes:02d}:{seconds:02d}.{milliseconds:03d}"
+    return f"{hours_marker}{minutes:02d}:{seconds:02d}.{milliseconds:02d}"
+
+def filename(path):
+    return os.path.splitext(os.path.basename(path))[0]
+
+def convert_ms(time):
+    parts = time.split(":")
+    hours = int(parts[0])
+    minutes = int(parts[1])
+    seconds = int(parts[2].split(".")[0])
+    ms = int(parts[2].split(".")[1]) 
+    return hours * 1000*60*60 + minutes * 1000*60 + seconds * 1000 + ms
+
+def add_n_ms(time, n):
+    total_ms = convert_ms(time) + n
+    new_hours, remainder = divmod(total_ms, 1000*60*60)
+    new_minutes, remainder = divmod(remainder, 1000*60)
+    new_seconds, new_ms = divmod(remainder, 1000)
+    new_time = f"{int(new_hours):02d}:{int(new_minutes):02d}:{int(new_seconds):02d}.{int(new_ms):03d}"
+    return new_time
+
+def formatloc(time):
+    # Remove the third digit of ms
+    parts = time.split(":")
+    hours = parts[0]
+    minutes = parts[1]
+    seconds = parts[2].split(".")[0]
+    ms = int(parts[2].split(".")[1]) // 10
+    return f"{hours}:{minutes}:{seconds}.{ms:02d}"
 
 
 def write_srt(transcript: Iterator[dict], file: TextIO):
@@ -58,17 +83,22 @@ def write_ass(transcript: Iterator[dict], file: TextIO):
     file.write("[Events]\n")
     file.write("Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text\n")
 
-    previous_end = "00:00:00.000"
-
     for i, segment in enumerate(transcript, start=1):
         counter = 0
         start_time = format_timestamp(segment['start'], always_include_hours=True)
         end_time = format_timestamp(segment['end'], always_include_hours=True)
+        #start_time = formatloc(format_timestamp(segment['start'], always_include_hours=True))
+        #end_time = formatloc(format_timestamp(segment['end'], always_include_hours=True))
         text = segment['text'].strip().replace('\\', '\\\\').replace('{', '\\{').replace('}', '\\}').replace('-->', '->')
         delta = abs(convert_ms(start_time) - convert_ms(end_time))
-        delta_word = delta/text.count(" ")//11
-        boiler = "{\q1\\be1\\b700\shad10\\a11\k"+str(int(delta_word))+"}"
-        emoji = r" {\frz345}\u1F468 "
+        if text.count(" ") == 0:
+            delta_word = delta
+        else:
+            delta_word = delta/text.count(" ")//11
+        # 100 u = 1000 ms, we know delta_word ms
+        delay = delta_word
+        boiler = "{\q1\\be1\\b700\shad10\\a11\k"+str(int(delay))+"}"
+        emoji = r" \{\frz345}\u1F468 "
         text =boiler+text.upper().replace(" "," "+boiler)
         text = text.split(" ")
         length = len(text)
@@ -77,30 +107,11 @@ def write_ass(transcript: Iterator[dict], file: TextIO):
             localcount = random.randint(1, 3)
             if counter + localcount > length:
                 localcount = length - counter
-            localstart = add_n_ms(start_time,counter*delta_word)
-            localend = add_n_ms(localstart,localcount*delta_word)
+            localstart = formatloc(add_n_ms(start_time,counter*delta_word*10))
+            localend = formatloc(add_n_ms(localstart,localcount*delta_word*10))
             localtext = " ".join(text[counter:counter+localcount])
             file.write(f"""Dialogue: 0,{localstart},{localend},{style},,50,50,20,,{localtext}"""+  "\n")
             counter += localcount       
 
 
 
-def filename(path):
-    return os.path.splitext(os.path.basename(path))[0]
-
-def convert_ms(time):
-    parts = time.split(":")
-    hours = int(parts[0])
-    minutes = int(parts[1])
-    seconds = int(parts[2].split(".")[0])
-    ms = int(parts[2].split(".")[1])
-    return hours * 3600000 + minutes * 60000 + seconds * 1000 + ms
-
-def add_n_ms(time, n):
-    total_ms = convert_ms(time) + n
-    new_hours, remainder = divmod(total_ms, 3600000)
-    new_minutes, remainder = divmod(remainder, 60000)
-    new_seconds, remainder = divmod(remainder, 1000)
-    new_ms = remainder
-    new_time = f"{int(new_hours):02d}:{int(new_minutes):02d}:{int(new_seconds):02d}.{int(new_ms):03d}"
-    return new_time
