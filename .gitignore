@@ -3,6 +3,9 @@ temp/*
 __pycache__/*
 __pycache__
 
+test2.mp4
+temp-audio.m4a
+
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
