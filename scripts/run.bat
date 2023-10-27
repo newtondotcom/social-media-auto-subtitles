@@ -1,1 +1,1 @@
-python .\cli.py .\test.mp4 -o .\output\
+python .\cli.py .\test3.mp4 -o .\output\
