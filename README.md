@@ -1,3 +1,3 @@
 # Automatic subtitles in your videos
 
-This project is also based on [this incredible work](https://github.com/m1guelpf/auto-subtitles) by [m1guelpf](https://github.com/m1guelpf). I say "also" because I have an [other project](https://github.com/newtondotcom/auto-subtitle) much closer to the original one, which I have added to the possibility to use speaker diarization to recognize who is speaking in the video. 
+This project based on [this repo](https://github.com/m-bain/whisperX).
