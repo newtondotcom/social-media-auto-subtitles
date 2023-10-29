@@ -1,1 +1,0 @@
-ffmpeg -i input/test.mp4 -vf "ass=temp/test2.ass" -c:a copy test2.mp4 -y 
