@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-#
-# Based on a script by Donald Feury
-# https://gitlab.com/dak425/scripts/-/blob/master/trim_silenceV2
-# https://youtu.be/ak52RXKfDw8
-
 import math
 import sys
 import subprocess
@@ -60,7 +54,7 @@ def main(file_in="input/test4.mp4", file_out="output/test_silent.mp4"):
     #file_out = sys.argv[2]
 
     vid = VideoFileClip(file_in)
-    intervals_to_keep = find_speaking(vid.audio)
+    intervals_to_keep = find_speaking(vid.audio,0.1,0.01,0.25)
 
     if intervals_to_keep==[]:
         print("No intervals to keep, exiting")
