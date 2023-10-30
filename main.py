@@ -1,7 +1,7 @@
 from utils import *
 from gen import *
 
-video_file = "input/test4.mp4"
+video_file = "input/mbf.mp4"
 
 audio_paths = get_audio([video_file])
 audio_path = audio_paths[video_file]

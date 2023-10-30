@@ -48,6 +48,8 @@ def write_ass(file: TextIO, words):
     file.write("\n")
     file.write("[Events]\n")
     file.write("Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text\n")
+
+    print(words)
     
     for s in words:
         for segment in s['words']:
@@ -58,7 +60,7 @@ def write_ass(file: TextIO, words):
             end = segment['end']
             #tab.append([start,end,word])
             delta = (end - start) * 1000
-            boiler = "{\q1\\be1\\b700\shad10\\a11\k"+str(int(delta))+"}"
+            boiler = "{\q1\\b700\shad1\\a11\k"+str(int(delta))+"}"
             emoji = r" \{\frz345}\u1F468 "
             text =boiler+word.upper().replace(" "," "+boiler)
             style = "s"+str(random.randint(0,len(styles)))
@@ -77,3 +79,7 @@ def gen_video(path,ass_path):
             out_path
     ]
     subprocess.run(ffmpeg_cmd, check=False)
+    
+def clean_temp(path):
+    None
+    
