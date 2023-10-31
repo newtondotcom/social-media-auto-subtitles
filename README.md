@@ -1,3 +1,9 @@
 # Automatic subtitles in your videos
 
-This project based on [this repo](https://github.com/m-bain/whisperX).
+## Goal
+
+The goal is to generate subtitles and make videos more alive. This way, they can be posted on social medias.
+
+## Techstack
+
+This project is based on [WhisperX](https://github.com/m-bain/whisperX) to get speech to text translations, with word level timestamp. It then uses ```.ass``` subtitles format and ```ffmpeg``` to encode subtitles onto videos. After, it removes silent segways of the video.
