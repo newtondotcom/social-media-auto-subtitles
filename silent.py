@@ -46,7 +46,7 @@ def find_speaking(audio_clip, window_size=0.1, volume_threshold=0.01, ease_in=0.
     return speaking_intervals
 
 
-def main(file_in="input/test4.mp4", file_out="output/test_silent.mp4"):
+def silence(file_in="input/mbf.mp4", file_out="output/test_silent.mp4"):
     # Parse args
     # Input file path
     #file_in = sys.argv[1]
@@ -59,8 +59,6 @@ def main(file_in="input/test4.mp4", file_out="output/test_silent.mp4"):
     if intervals_to_keep==[]:
         print("No intervals to keep, exiting")
         sys.exit(0)
-
-    print("Keeping intervals: " + str(intervals_to_keep))
     
     keep_clips = [vid.subclip(max(start, 0), end) for [start, end] in intervals_to_keep]
 
@@ -76,6 +74,3 @@ def main(file_in="input/test4.mp4", file_out="output/test_silent.mp4"):
     )
 
     vid.close()
-
-if __name__ == '__main__':
-    main()
