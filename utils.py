@@ -75,12 +75,13 @@ def gen_video(path,ass_path):
     ffmpeg_cmd = [
             "ffmpeg",
             "-i", path,
-            "-vf", f"ass={ass_path}",
+            "-vf", f"ass={ass_path}:fontsdir=static/NotoColorEmoji-Regular.ttf",
             "-c:a", "copy",
             "-y",
             out_path
     ]
     subprocess.run(ffmpeg_cmd, check=False)
+    return out_path
     
 def clean_temp(path):
     None
