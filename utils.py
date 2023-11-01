@@ -1,6 +1,6 @@
 import os
-from typing import Iterator, TextIO
 import ffmpeg
+from typing import TextIO
 import random
 import subprocess
 from styles import *
@@ -19,10 +19,12 @@ def time_to_hhmmss(date):
 def get_audio(paths):
     audio_paths = {}
 
+    if not os.path.exists("temp/"):
+        os.makedirs("temp/")
+        
     for path in paths:
         print(f"Extracting audio from {filename(path)}...")
         output_path = os.path.join("temp/", f"{filename(path)}.wav")
-
         ffmpeg.input(path).output(
             output_path,
             acodec="pcm_s16le", ac=1, ar="16k"
