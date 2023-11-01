@@ -15,13 +15,17 @@ styles = gen_styles()
 
 def write_ass(file: TextIO,words):
     for s in words:
-        for segment in s['words']:
-            word = segment['word']
-            if len(segment)==1:
+        for i in range(len(s['words'])):
+            print(s['words'])
+            word = s['words'][i]['word']
+            if len(s['words'][i])==1:
                 break
-            start = segment['start']
-            end = segment['end']
-            tab.append([start,end,word])
+            start = s['words'][i]['start']
+            end = s['words'][i]['end']
+            if i == len(s['words']) - 1 :
+                tab.append([start,end,word,True])
+            else :
+                tab.append([start,end,word,False])
             
 ass_path = "temp/"
 path = "input/mbf.mp4"
@@ -77,9 +81,7 @@ def treat_tab():
     
 treat_tab()
     
-    
 def write_new_ass(file : TextIO):
-    
     file.write("[Script Info]\n")
     file.write("ScriptType: v4.00\n")
     file.write("Collisions: Normal\n")
@@ -109,5 +111,4 @@ def write_new_ass(file : TextIO):
 with open(ass_path,"w", encoding="utf-8") as ass:
     write_new_ass(file=ass)
     
-
 gen_video()
