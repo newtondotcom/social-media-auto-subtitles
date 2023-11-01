@@ -1,5 +1,6 @@
 from utils import *
 from gen import *
+from silent import *
 
 video_file = "input/mbf.mp4"
 
@@ -14,4 +15,6 @@ ass_path = os.path.join(ass_path, f"{filename(video_file)}.ass")
 with open(ass_path,"w", encoding="utf-8") as ass:
     write_ass(file=ass,words=words)
 
-gen_video(path=video_file,ass_path=ass_path)
+out_path_uncut = gen_video(path=video_file,ass_path=ass_path)
+out_path_cut = ""
+silence(out_path_uncut,out_path_cut)
