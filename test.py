@@ -7,6 +7,7 @@ import subprocess
 import datetime
 from styles import *
 from utils import *
+from silent import *
 
 
 tab = []
@@ -46,6 +47,7 @@ def gen_video():
             out_path
     ]
     subprocess.run(ffmpeg_cmd, check=False)
+    return out_path
         
 
 def treat_tab():
@@ -59,8 +61,6 @@ def treat_tab():
         moyenne_lenght += len(word)
     moyenne_lenght = moyenne_lenght/len(tab)
     moyenne_time = moyenne_time/len(tab)
-    print(moyenne_lenght)
-    print(moyenne_time)
     
     retenue = 0
     for j in range(len(tab)):
@@ -70,11 +70,16 @@ def treat_tab():
             duration = tab[j][1]-tab[j][0]
             lenght = len(tab[j][2])
             if duration < moyenne_time or lenght<moyenne_lenght :
-                if j != len(tab)-1:
-                    new_tab.append([tab[j],tab[j+1]])
-                else :
+                if j == len(tab)-1:
                     new_tab.append(([tab[j]]))
-                retenue = 1
+                else:
+                    if j != len(tab)-2:
+                        if random.randint(1,2) == 1:
+                            new_tab.append([tab[j],tab[j+1]])
+                            retenue = 1
+                        else :
+                            new_tab.append([tab[j],tab[j+1],tab[j+2]])
+                            retenue = 2
             else :
                 new_tab.append([tab[j]])
                 
@@ -97,18 +102,22 @@ def write_new_ass(file : TextIO):
     
     for s in new_tab:
         localtext =  ""
+        globalstart = s[0][0]
+        globalend = s[-1][1]
         for segment in s:
             word = segment[2]
             start = segment[0]
             end = segment[1]
             delta = (end - start) * 1000
-            boiler = " {\q1\\b700\shad1\\a11\k"+str(int(delta))+"}"
+            boiler = " {\q1\\b700\shad1\\an2\k"+str(int(delta))+"}"
             emoji = r" \{\frz345}\u1F468 "
             localtext += boiler+word.upper().replace(" "," "+boiler)
             style = "s"+str(random.randint(0,len(styles)))
-        file.write(f"""Dialogue: 0,{time_to_hhmmss(start)},{time_to_hhmmss(end)},{style},,50,50,20,,{localtext}"""+  "\n")
+        file.write(f"""Dialogue: 0,{time_to_hhmmss(globalstart)},{time_to_hhmmss(globalend)},{style},,50,50,20,,{localtext}"""+  "\n")
     
 with open(ass_path,"w", encoding="utf-8") as ass:
     write_new_ass(file=ass)
     
-gen_video()
+video =gen_video()
+
+silence(file_in=video)
