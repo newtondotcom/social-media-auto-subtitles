@@ -110,7 +110,7 @@ def write_new_ass(file : TextIO):
             end = segment[1]
             delta = (end - start) * 1000
             boiler = " {\q1\\b700\shad1\\an2\k"+str(int(delta))+"}"
-            emoji = r" \{\frz345}\u1F468 "
+            boiler = "{\\be0\\b1\\move(100, 100, 200, 200,["+str(start)+","+str(int(delta))+"])\\blur2\\1c&HFFCA34&\\2c&HFFCA34&\\3c&ffffff&}"
             localtext += boiler+word.upper().replace(" "," "+boiler)
             style = "s"+str(random.randint(0,len(styles)))
         file.write(f"""Dialogue: 0,{time_to_hhmmss(globalstart)},{time_to_hhmmss(globalend)},{style},,50,50,20,,{localtext}"""+  "\n")
@@ -120,4 +120,4 @@ with open(ass_path,"w", encoding="utf-8") as ass:
     
 video =gen_video()
 
-silence(file_in=video)
+#silence(file_in=video)
