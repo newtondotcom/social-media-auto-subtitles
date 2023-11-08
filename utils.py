@@ -3,6 +3,7 @@ import ffmpeg
 from typing import TextIO
 import random
 import subprocess
+import cv2
 from styles import *
 
 def filename(path):
@@ -86,3 +87,16 @@ def gen_video(path,ass_path):
 def clean_temp(path):
     None
     
+def get_dimensions(path):
+    cap = cv2.VideoCapture(path)
+    if not cap.isOpened():
+        print("Error: Could not open video file.")
+    else:
+        width = int(cap.get(3))  # 3 corresponds to CV_CAP_PROP_FRAME_WIDTH
+        height = int(cap.get(4))  # 4 corresponds to CV_CAP_PROP_FRAME_HEIGHT
+
+        print(f"Video Dimensions (Width x Height): {width} x {height}")
+
+        # Release the video capture object
+        cap.release()
+        return width,height
