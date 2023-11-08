@@ -4,15 +4,17 @@ import random
 import os
 from typing import Iterator, TextIO
 import subprocess
-import datetime
 from styles import *
 from utils import *
 from silent import *
 
+colors = ["\\1c&HFFCA34&\\2c&HFFCA34&\\3c&Hffffff&\\be0\\b\\bord1\\shad0","\\1c&HFFFFFF&\\2c&HFFCA34&\\3c&H000000&\\shad1"]
 
 tab = []
 new_tab = []
 styles = gen_styles()
+width = 0
+heigh = 0
 
 def write_ass(file: TextIO,words):
     for s in words:
@@ -30,6 +32,7 @@ def write_ass(file: TextIO,words):
             
 ass_path = "temp/"
 path = "input/mbf.mp4"
+width,heigh = get_dimensions(path=path)
 ass_path = os.path.join(ass_path, f"{filename(path)}.ass")
 
 with open(ass_path,"w", encoding="utf-8") as ass:
@@ -73,13 +76,24 @@ def treat_tab():
                 if j == len(tab)-1:
                     new_tab.append(([tab[j]]))
                 else:
-                    if j != len(tab)-2:
+                    if j == len(tab)-2:
                         if random.randint(1,2) == 1:
                             new_tab.append([tab[j],tab[j+1]])
                             retenue = 1
                         else :
                             new_tab.append([tab[j],tab[j+1],tab[j+2]])
                             retenue = 2
+                    else:
+                        if j==len(tab)-3:
+                            if random.randint(1,3) == 1:
+                                new_tab.append([tab[j],tab[j+1]])
+                                retenue = 1
+                            else :
+                                new_tab.append([tab[j],tab[j+1],tab[j+2]])
+                                retenue = 2
+                        else:
+                            new_tab.append([tab[j],tab[j+1],tab[j+2],tab[j+3]])
+                            retenue = 3
             else :
                 new_tab.append([tab[j]])
                 
@@ -104,15 +118,19 @@ def write_new_ass(file : TextIO):
         localtext =  ""
         globalstart = s[0][0]
         globalend = s[-1][1]
+        color = random.choice(colors)
         for segment in s:
             word = segment[2]
             start = segment[0]
             end = segment[1]
             delta = (end - start) * 1000
-            boiler = " {\q1\\b700\shad1\\an2\k"+str(int(delta))+"}"
-            boiler = "{\\be0\\b1\\move(100, 100, 200, 200,["+str(start)+","+str(int(delta))+"])\\blur2\\1c&HFFCA34&\\2c&HFFCA34&\\3c&ffffff&}"
+            boiler = " {\\q1\\an2\\b700\\k"+str(int(delta)-int(delta)%10)+color+"}"
+            #boiler = " {\\be0\\b1\\move(100, 100, 200, 200,["+str(start)+","+str(int(delta))+"])\\blur2}"
             localtext += boiler+word.upper().replace(" "," "+boiler)
             style = "s"+str(random.randint(0,len(styles)))
+        words = localtext.split("{\q1")
+        if len(words)==5:  ## add a line break if there are more than 4 words
+            localtext = "{\q1"+words[1]+"{\q1"+words[2]+"\\N{\q1"+words[3]+"{\q1"+words[4]
         file.write(f"""Dialogue: 0,{time_to_hhmmss(globalstart)},{time_to_hhmmss(globalend)},{style},,50,50,20,,{localtext}"""+  "\n")
     
 with open(ass_path,"w", encoding="utf-8") as ass:
@@ -121,3 +139,6 @@ with open(ass_path,"w", encoding="utf-8") as ass:
 video =gen_video()
 
 #silence(file_in=video)
+
+
+print(width,heigh)
