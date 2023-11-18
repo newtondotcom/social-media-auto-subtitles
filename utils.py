@@ -100,3 +100,32 @@ def get_dimensions(path):
         # Release the video capture object
         cap.release()
         return width,height
+    
+
+def juxtaposer_mots(tab, new_tab, seuil, j, moyenne_time, moyenne_length):
+    def is_below_threshold(word, next_word=None):
+        if next_word is None:
+            return word[1] - word[0] < moyenne_time or len(word[2]) < moyenne_length
+        else:
+            return next_word[0] - word[1] < seuil
+
+    group = [tab[j]]
+    if not is_below_threshold(tab[j]) or j == len(tab) - 1:
+        new_tab.append(group)
+        return 0
+
+    mots_a_juxtaposer = min(4, len(tab) - j)
+    retenue = 0
+
+    for i in range(1, mots_a_juxtaposer):
+        current_word = tab[j + i]
+        previous_word = tab[j + i - 1]
+
+        if is_below_threshold(current_word) and is_below_threshold(previous_word, current_word):
+            group.append(current_word)
+            retenue += 1
+        else:
+            break
+
+    new_tab.append(group)
+    return retenue
