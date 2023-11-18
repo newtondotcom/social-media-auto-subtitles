@@ -2,7 +2,7 @@ from utils import *
 from gen import *
 from silent import *
 
-video_file = "input/mbf.mp4"
+video_file = "input/palma.mp4"
 
 audio_paths = get_audio([video_file])
 audio_path = audio_paths[video_file]
