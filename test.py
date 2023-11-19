@@ -3,13 +3,16 @@ words = [{'start': 9.36, 'end': 10.881, 'text': ' Bonjour.', 'words': [{'word': 
 
 import random
 import os
+import re
 from typing import Iterator, TextIO
 import subprocess
 from styles import *
 from utils import *
 from silent import *
 
-colors = ["\\1c&HFFCA34&\\2c&HFFCA34&\\3c&Hffffff&\\be0\\b\\bord1\\shad0","\\1c&HFFFFFF&\\2c&HFFCA34&\\3c&H000000&\\shad1"]
+# http://www.looksoftware.com/help/v11/Content/Reference/Language_Reference/Constants/Color_constants.htm
+# rouge, jaune, vert
+colors = ["\\2c&&H000000FF&","\\2c&H0000FFFF&","\\2c&H0000FF00&"]
 
 tab = []
 new_tab = []
@@ -91,23 +94,41 @@ def write_new_ass(file : TextIO):
     file.write("[Events]\n")
     file.write("Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text\n")
     
+    i_color = 0
     for s in new_tab:
         localtext =  ""
         globalstart = s[0][0]
         globalend = s[-1][1]
-        color = random.choice(colors)
-        for segment in s:
-            word = segment[2]
-            start = segment[0]
-            end = segment[1]
-            delta = (end - start) * 1000
-            boiler = " {\\q1\\an2\\b700\\k"+str(int(delta)-int(delta)%10)+color+"}"
-            #boiler = " {\\be0\\b1\\move(100, 100, 200, 200,["+str(start)+","+str(int(delta))+"])\\blur2}"
-            localtext += boiler+word.upper().replace(" "," "+boiler)
-            style = "s"+str(random.randint(0,len(styles)))
+        color = colors[i_color]
+        i_color = (i_color+1)%len(colors)
+        
+        if len(s)==4:
+            first_start = s[0][0]
+            first_end = s[1][1]
+            second_start = s[2][0]
+            second_end = s[3][1]
+            boiler = " {\\be1\\b\\bord2\\shad1\\1c&&H00FFFFFF&\\3c&H00000000&\\q1\\an2\\b700\\k"+str(int((first_end-first_start)*1000)-int((first_end-first_start)*1000)%10)+color+"}"
+            localtext += boiler+s[0][2].upper().replace(" "," "+boiler)
+            localtext += " "+s[1][2].upper()+"\\N"
+            boiler = " {\\be1\\b\\bord2\\shad1\\1c&&H00FFFFFF&\\3c&H00000000&\\q1\\an2\\b700\\k"+str(int((second_end-second_start)*1000)-int((second_end-second_start)*1000)%10)+color+"}"
+            localtext += boiler+s[2][2].upper().replace(" "," "+boiler)
+            localtext += " "+s[3][2].upper()+"\\N"
+        else :
+            for segment in s:
+                word = segment[2]
+                start = segment[0]
+                end = segment[1]
+                delta = (end - start) * 1000
+                boiler = " {\\be1\\b\\bord2\\shad1\\1c&&H00FFFFFF&\\3c&H00000000&\\q1\\an2\\b700\\k"+str(int(delta)-int(delta)%10)+color+"}"
+                #boiler = " {\\be0\\b1\\move(100, 100, 200, 200,["+str(start)+","+str(int(delta))+"])\\blur2}"
+                localtext += boiler+word.upper().replace(" "," "+boiler)
+        
+        style = "s"+str(random.randint(0,len(styles)))
+            
         words = localtext.split("{\q1")
         if len(words)==5:  ## add a line break if there are more than 4 words
             localtext = "{\q1"+words[1]+"{\q1"+words[2]+"\\N{\q1"+words[3]+"{\q1"+words[4]
+
         file.write(f"""Dialogue: 0,{time_to_hhmmss(globalstart)},{time_to_hhmmss(globalend)},{style},,50,50,20,,{localtext}"""+  "\n")
     
 with open(ass_path,"w", encoding="utf-8") as ass:
