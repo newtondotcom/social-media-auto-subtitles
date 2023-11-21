@@ -102,26 +102,30 @@ def write_new_ass(file : TextIO):
         color = colors[i_color]
         i_color = (i_color+1)%len(colors)
         
+        
+        boiler = "{\\k90\\fad(0,0)\\be1\\b\\bord2\\shad1\\1c&&H00FFFFFF&\\3c&H00000000&\\q1\\an2\\b700"+color+"} "
+        localtext = boiler
         if len(s)==4:
             first_start = s[0][0]
             first_end = s[1][1]
             second_start = s[2][0]
             second_end = s[3][1]
-            boiler = " {\\be1\\b\\bord2\\shad1\\1c&&H00FFFFFF&\\3c&H00000000&\\q1\\an2\\b700\\k"+str(int((first_end-first_start)*1000)-int((first_end-first_start)*1000)%10)+color+"}"
-            localtext += boiler+s[0][2].upper().replace(" "," "+boiler)
-            localtext += " "+s[1][2].upper()+"\\N"
-            boiler = " {\\be1\\b\\bord2\\shad1\\1c&&H00FFFFFF&\\3c&H00000000&\\q1\\an2\\b700\\k"+str(int((second_end-second_start)*1000)-int((second_end-second_start)*1000)%10)+color+"}"
-            localtext += boiler+s[2][2].upper().replace(" "," "+boiler)
-            localtext += " "+s[3][2].upper()+"\\N"
+            diff = float(first_end-first_start)
+            duration = "{\\k"+str(abs(round(diff*100)))+"}"
+            localtext += duration+s[0][2].upper()+" "+s[1][2].upper()+"\\N "
+            diff2 = float(second_end-second_start)
+            duration2 = "{\\k"+str(abs(round(diff2*100)))+"}"
+            localtext += duration2+s[2][2].upper()+" "+s[3][2].upper()
         else :
             for segment in s:
                 word = segment[2]
                 start = segment[0]
                 end = segment[1]
-                delta = (end - start) * 1000
-                boiler = " {\\be1\\b\\bord2\\shad1\\1c&&H00FFFFFF&\\3c&H00000000&\\q1\\an2\\b700\\k"+str(int(delta)-int(delta)%10)+color+"}"
+                delta = end - start
+                duration = "{\\k"+str(abs(round(delta*100)))+"}"
                 #boiler = " {\\be0\\b1\\move(100, 100, 200, 200,["+str(start)+","+str(int(delta))+"])\\blur2}"
-                localtext += boiler+word.upper().replace(" "," "+boiler)
+                #localtext += boiler+word.upper().replace(" "," "+boiler)
+                localtext += duration+word.upper()+" "
         
         style = "s"+str(random.randint(0,len(styles)))
             
@@ -129,7 +133,7 @@ def write_new_ass(file : TextIO):
         if len(words)==5:  ## add a line break if there are more than 4 words
             localtext = "{\q1"+words[1]+"{\q1"+words[2]+"\\N{\q1"+words[3]+"{\q1"+words[4]
 
-        file.write(f"""Dialogue: 0,{time_to_hhmmss(globalstart)},{time_to_hhmmss(globalend)},{style},,50,50,20,,{localtext}"""+  "\n")
+        file.write(f"""Dialogue: 0,{time_to_hhmmss(globalstart)},{time_to_hhmmss(globalend)},{style},,50,50,20,fx,{localtext}"""+  "\n")
     
 with open(ass_path,"w", encoding="utf-8") as ass:
     write_new_ass(file=ass)
