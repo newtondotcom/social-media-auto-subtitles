@@ -76,7 +76,8 @@ def gen_video(path,ass_path):
     ffmpeg_cmd = [
             "ffmpeg",
             "-i", path,
-            "-vf", f"ass={ass_path}:fontsdir=static/NotoColorEmoji-Regular.ttf",
+            #"-vf", f"ass={ass_path}:fontsdir=static/NotoColorEmoji-Regular.ttf",
+            "-vf", f"ass={ass_path}",
             "-c:a", "copy",
             "-y",
             out_path
