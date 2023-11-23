@@ -18,7 +18,10 @@ tab = []
 new_tab = []
 styles = gen_styles()
 width = 0
-heigh = 0
+heigh = 0  
+ass_path = "temp/"
+path = "input/palma.mp4"
+width,heigh = get_dimensions(path=path)
 
 def write_ass(file: TextIO,words):
     for s in words:
@@ -33,10 +36,7 @@ def write_ass(file: TextIO,words):
                 tab.append([start,end,word,True])
             else :
                 tab.append([start,end,word,False])
-            
-ass_path = "temp/"
-path = "input/palma.mp4"
-width,heigh = get_dimensions(path=path)
+
 ass_path = os.path.join(ass_path, f"{filename(path)}.ass")
 
 with open(ass_path,"w", encoding="utf-8") as ass:

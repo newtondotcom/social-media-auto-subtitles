@@ -2,6 +2,7 @@ output/*
 temp/*
 __pycache__/*
 __pycache__
+emojis/output_video.mp4
 
 test2.mp4
 temp-audio.m4a
