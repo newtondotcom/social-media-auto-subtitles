@@ -114,7 +114,7 @@ def write_new_ass(file : TextIO):
             duration = "{\\k"+str(abs(round(diff*100)))+"}"
             localtext += duration+s[0][2].upper()+" "+s[1][2].upper()+"\\N "
             diff2 = float(second_end-second_start)
-            duration2 = "{\\k"+str(abs(round(diff2*100)))+"}"
+            duration2 = "{\\k"+str(abs(round(diff2*100)))+f"\\t({str(abs(round(diff*100)))},{str(abs(round(diff2*100)))},\\fscx105)"+"}"
             localtext += duration2+s[2][2].upper()+" "+s[3][2].upper()
         else :
             for segment in s:
