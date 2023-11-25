@@ -1,3 +1,12 @@
-FROM python:3.7.3-slim-stretch
+FROM python:3.9.18-slim-bullseye
 
-RUN pip install git+https://github.com/m-bain/whisperx.git
+RUN useradd -ms /bin/bash whisperx
+USER whisperx
+
+WORKDIR /app
+
+COPY --chown=whisperx:whisperx . /app
+
+RUN sh setup.sh
+
+
