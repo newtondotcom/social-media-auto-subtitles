@@ -1,6 +1,7 @@
 from utils import *
 from gen import *
 from silent import *
+from s3 import *
 
 video_file = "input/palma.mp4"
 
