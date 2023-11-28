@@ -106,6 +106,8 @@ def get_dimensions(path):
 def juxtaposer_mots(tab, new_tab, seuil, j, moyenne_time, moyenne_length):
     def is_below_threshold(word, next_word=None):
         if next_word is None:
+            if word[2].endswith("."):
+                return True
             return word[1] - word[0] < moyenne_time or len(word[2]) < moyenne_length
         else:
             return next_word[0] - word[1] < seuil
