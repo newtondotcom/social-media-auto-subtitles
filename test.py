@@ -103,7 +103,7 @@ def write_new_ass(file : TextIO):
         i_color = (i_color+1)%len(colors)
         
         
-        boiler = "{\\k90\\fad(0,0)\\be1\\b\\bord2\\shad1\\1c&&H00FFFFFF&\\3c&H00000000&\\q1\\an2\\b700"+color+"} "
+        boiler = "{\\k90\\fad(0,0)\\be1\\b\\bord2\\shad1\\1c&&H00FFFFFF&\\3c&H00000000&\\q1\\an6\\b700"+color+"} "
         localtext = boiler
         if len(s)==4:
             first_start = s[0][0]
