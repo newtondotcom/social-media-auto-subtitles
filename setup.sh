@@ -1,8 +1,8 @@
-pip3 install git+https://github.com/m-bain/whisperx.git
-pip3 install ffmpeg-python
-pip3 install opencv-python
-pip3 install moviepy
-pip3 install boto3
+apt install git
 apt install ffmpeg
+pip install git+https://github.com/m-bain/whisperx.git
+pip install ffmpeg-python
+pip install opencv-python
+pip install moviepy
 mkdir temp
 mkdir output
