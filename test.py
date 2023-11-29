@@ -9,6 +9,7 @@ import subprocess
 from styles import *
 from utils import *
 from silent import *
+from emojis import *
 
 # http://www.looksoftware.com/help/v11/Content/Reference/Language_Reference/Constants/Color_constants.htm
 # rouge, jaune, vert
@@ -27,7 +28,6 @@ width,heigh = get_dimensions(path=path)
 def write_ass(file: TextIO,words):
     for s in words:
         for i in range(len(s['words'])):
-            print(s['words'])
             word = s['words'][i]['word']
             if len(s['words'][i])==1:
                 break
@@ -43,19 +43,18 @@ ass_path = os.path.join(ass_path, f"{filename(path)}.ass")
 with open(ass_path,"w", encoding="utf-8") as ass:
     write_ass(file=ass,words=words)
             
-def gen_video():
-    output_dir = "output/"
-    out_path = os.path.join(output_dir, f"{filename(path)}ASS.mp4")
+def gen_video(in_path,out_path):
+    #output_dir = "output/"
+    #out_path = os.path.join(output_dir, f"{filename(path)}ASS.mp4")
     ffmpeg_cmd = [
             "ffmpeg",
-            "-i", path,
+            "-i", in_path,
             "-vf", f"ass={ass_path}",
             "-c:a", "copy",
             "-y",
             out_path
     ]
     subprocess.run(ffmpeg_cmd, check=False)
-    return out_path
         
 
 def treat_tab():
@@ -103,10 +102,10 @@ def write_new_ass(file : TextIO):
         color = colors[i_color]
         i_color = (i_color+1)%len(colors)
         
-        boiler = "{\\k40\\fad(0,0)\\be1\\b\\bord2\\shad1\\1c&&HFFFFFF&\\3c&H000000&\\q1\\an2\\b700"+color+"} "
+        boiler = "{\\k40\\fad(0,0)\\be1\\b\\bord2\\shad1\\1c&&HFFFFFF&\\3c&H000000&\\q1\\an5\\b700"+color+"} "
         localtext = boiler
         if len(s)==4:
-            boiler = "{\\fad(0,0)\\be1\\b\\bord2\\shad1\\1c&&HFFFFFF&\\3c&H000000&\\q1\\an2\\b700"+color+"} "
+            boiler = "{\\fad(0,0)\\be1\\b\\bord2\\shad1\\1c&&HFFFFFF&\\3c&H000000&\\q1\\an5\\b700"+color+"} "
             localtext = boiler
             first_start = s[0][0]
             first_end = s[1][1]
@@ -134,7 +133,7 @@ def write_new_ass(file : TextIO):
                 #localtext += boiler+word.upper().replace(" "," "+boiler)
                 localtext += duration+word.upper()+" "
         
-        style = "s"+str(random.randint(0,len(styles)))
+        style = "s"+str(random.randint(0,len(styles)-1))
             
         words = localtext.split("{\q1")
         if len(words)==5:  ## add a line break if there are more than 4 words
@@ -145,8 +144,13 @@ def write_new_ass(file : TextIO):
 with open(ass_path,"w", encoding="utf-8") as ass:
     write_new_ass(file=ass)
     
-video =gen_video()
+video = "output/test.mp4"
+image_list = [("1", 1.523, 5.518), ("2", 10.5, 15.5), ("3", 20.5, 25.5)]
+overlay_images_on_video(in_path="input/mbf.mp4",out_path=video,image_list=image_list,width=width,height=heigh,ass=ass_path)
+
+
+#video2 = "output/test2.mp4"
+#gen_video(video,video2)
 
 #silence(file_in=video)
 
-print(width,heigh)
