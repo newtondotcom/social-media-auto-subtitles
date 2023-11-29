@@ -14,19 +14,19 @@ def overlay_images_on_video(in_path, out_path, image_list, width, height,ass):
     swidth = (width-emoji_size)/2
     sheight = (height-emoji_size)/2 - y_offset
     
-    filter_complex = "[0:v]ass='" + ass + "'[subtitle];"
+    filter_complex = ""
     for idx, (image_name, start_time, end_time) in enumerate(image_list):
-        previous_video = f"[subtitle]" if idx == 0 else f"[{idx}v]"
+        previous_video = f"[{idx}v]" if idx > 0 else "[0:v]"
         filter_complex += f"{previous_video}[{idx + 1}:v]overlay={swidth}:{sheight}:enable='between(t,{start_time},{end_time})'"
         if idx < len(image_list) - 1:
             filter_complex += f"[{idx + 1}v];"
         else:
-            filter_complex += ";"
+            filter_complex += f"[last];[last]ass='{ass}'[out]"
 
     # Build the complete ffmpeg command
     cmd = (
         f"ffmpeg -i {in_path} {' '.join(['-i ' + image for image, _, _ in image_list])} "
-        f"-filter_complex \"{filter_complex}\" -c:a copy {out_path} -y"
+        f"-filter_complex \"{filter_complex}\" -map [out] -map 0:a -c:a copy {out_path} -y"
     )
     print(cmd)
     subprocess.run(cmd, shell=True)
