@@ -16,3 +16,14 @@ def download_file(file_key, local_file_path):
         print(f"File downloaded successfully to {local_file_path}")
     except Exception as e:
         print(f"Error downloading file: {e}")
+
+def upload_file(file_key, local_file_path):
+    try:
+        s3.upload_file(local_file_path, bucket_name, file_key)
+        print(f"File uploaded successfully to S3 key: {file_key}")
+    except Exception as e:
+        print(f"Error uploading file: {e}")
+
+# Uncomment the following lines to use the download and upload functions
+# download_file(file_key, local_file_path)
+# upload_file(file_key, local_file_path)
