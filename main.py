@@ -2,6 +2,7 @@ from utils import *
 from gen import *
 from silent import *
 from s3 import *
+from emojis import *
 
 video_file = "input/palma.mp4"
 
