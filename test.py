@@ -146,11 +146,10 @@ with open(ass_path,"w", encoding="utf-8") as ass:
     
 video = "output/test.mp4"
 image_list = [("1", 1.523, 5.518), ("2", 10.5, 15.5), ("3", 20.5, 25.5)]
+
 overlay_images_on_video(in_path="input/mbf.mp4",out_path=video,image_list=image_list,width=width,height=heigh,ass=ass_path)
+overlay_images_on_video(in_path="input/mbf.mp4",out_path="output/test2.mp4",image_list=None,width=width,height=heigh,ass=ass_path)
 
-
-#video2 = "output/test2.mp4"
-#gen_video(video,video2)
 
 #silence(file_in=video)
 
